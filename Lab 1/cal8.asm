@@ -2,15 +2,6 @@ cpu "8085.tbl"
 hof "int8"
 org 9000h
 
-
-;GTHEX: EQU 030EH
-;HXDSP: EQU 034FH
-;OUTPUT: EQU 0389H
-;CLEAR: EQU 02BEH
-;RDKBD: EQU 03BAH
-
-;BEGIN:
-
 LDA 8001H
 
 CPI 01h
@@ -29,14 +20,14 @@ RST 5
 
 ADD:
 
-		MVI C, 00H      ; carry
+	MVI C, 00H      ; carry
         LDA 8002H       ; get first number
         MOV B, A        ; save in B
         LDA 8003H       ; get second number in A
         ADD B           ; A=A+B
-        JNC LOOP1        ; if no carry, continue to store the val, and carry =0
+        JNC LOOP1       ; if no carry, continue to store the val, and carry =0
         INR C           ; else carry=1
-LOOP1:   STA 8004H       ; store the val
+LOOP1:  STA 8004H       ; store the val
         MOV A, C        ; A=C
         STA 8005H       ; store the carry
         RST 5           ; stop
@@ -63,7 +54,7 @@ LOOP2:   STA 8004H    ; saving the result
 
 MUL:
 
-		LDA 8002H       ; Load first number
+	LDA 8002H       ; Load first number
         MOV B, A        ; Move to B
         CPI 00          ; if number is 0, jump to end and result=0
         JZ END1
@@ -72,13 +63,13 @@ MUL:
         CPI 00          ; if number is 0, jump to end and result=0
         JZ END1
         XRA A           ; A XOR A => A = 0 sweg
-LOOP3:   ADD B           ; A=A+B
+LOOP3:  ADD B           ; A=A+B
         DCR C           ; C = C-1
 						; compare?
         JZ  END1         ; if C==0, jump to end and store result
         JMP LOOP3        ; Loop back n add again
-END1:    STA 8004H       ; store result in memory
-RST 5           ; stop
+END1:   STA 8004H       ; store result in memory
+	RST 5           ; stop
 
 ;for division
 
