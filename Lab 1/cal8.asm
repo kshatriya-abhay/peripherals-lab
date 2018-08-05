@@ -1,6 +1,6 @@
 cpu "8085.tbl"
 hof "int8"
-org 9000h 
+org 9000h
 
 
 ;GTHEX: EQU 030EH
@@ -45,8 +45,8 @@ LOOP1:   STA 8004H       ; store the val
 
 SUB:
 
-		MVI C, 00H   ; borrow
-        LDA 8003H    ; get second number       
+	MVI C, 00H   ; borrow
+        LDA 8003H    ; get second number
         MOV B, A     ; save it in B
         LDA 8002H    ; get first number
         SUB B        ; A= A-B
@@ -66,12 +66,11 @@ MUL:
 		LDA 8002H       ; Load first number
         MOV B, A        ; Move to B
         CPI 00          ; if number is 0, jump to end and result=0
-        JZ END1  
+        JZ END1
         LDA 8003H       ; Load second number
         MOV C, A        ; Move to C
         CPI 00          ; if number is 0, jump to end and result=0
         JZ END1
-        
         XRA A           ; A XOR A => A = 0 sweg
 LOOP3:   ADD B           ; A=A+B
         DCR C           ; C = C-1
@@ -87,6 +86,8 @@ DIV:
 
 	MVI C,00H
 	LDA 8003H
+	CPI 00H
+	JZ ZERO
 	MOV B,A
 	LDA 8002H
 	LABEL: CMP B
@@ -97,4 +98,4 @@ DIV:
 	SKIP: STA 8005H
 	MOV A,C
 	STA 8004H
-	RST 5
+	ZERO: RST 5
