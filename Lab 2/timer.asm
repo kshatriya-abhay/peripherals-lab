@@ -38,32 +38,32 @@ DELAY:   ;Delay service routine
 	JNZ LOOP
 	RET
 
-reset_clk:   ;Update time on reaching 24 hour
-	mvi a,00h
-	sta 9292h
-	ret
-
 change_hr:   ; update time on reaching 60 minutes
-	lda 9292h
-	inr a
-	daa
-	sta 9292h
-	lda 9292h
-	cpi 24h
-	cz reset_clk
-	mvi a,00h
+	MVI a,59h
 	sta 9291h
+	lda 9292h
+	dcr a
+	sta 9292h
+	ani 0Fh
+	cpi 0Fh
+	cz hour1
+	lda 9292h
+	CPI 0F9h
+	jz eop
+	sta 9292h
 	ret
 
 change_min:   ;update time on reaching 60 seconds
-	mvi a,00h
+	MVI a,59h
 	sta 9290h
 	lda 9291h
-	inr a
-	daa
+	dcr a
 	sta 9291h
+	ani 0Fh
+	cpi 0Fh
+	cz min1
 	lda 9291h
-	cpi 60h
+	CPI 0F9h
 	cz change_hr
 	ret
 
@@ -79,7 +79,23 @@ displ:   ;Display the time on LEDs usnig UPDDT and UPDDA
 	call 0440H
 	ret
 
+hour1:
+	LDA 9292h
+	SUI 06h
+	STA 9292h
+	RET
+sec1:
+	LDA 9290h
+	SUI 06h
+	STA 9290h
+	RET
+min1:
+	LDA 9291h
+	SUI 06h
+	STA 9291h
+	RET
 
+	
 onesecond: ;Routine for Clock
 	
 	call displ
@@ -88,11 +104,13 @@ onesecond: ;Routine for Clock
 	SIM
 	EI
 	lda 9290h
-	inr a
-	daa
+	dcr a
 	sta 9290h
+	ani 0Fh
+	cpi 0Fh
+	cz sec1
 	lda 9290h
-	cpi 60h
+	CPI 0F9h
 	cz change_min
 	jmp onesecond
 	RET
@@ -105,4 +123,4 @@ start:
 	mvi a,90h
 	sta 8fc1h
 	call onesecond
-	rst 5
+eop:	rst 5
